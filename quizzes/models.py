@@ -53,18 +53,34 @@ class Choice(models.Model):
     
 class UserResponse(models.Model):
     user = models.ForeignKey(User, related_name="responses", on_delete=models.CASCADE, verbose_name="User")
+    quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE, verbose_name="Quiz")
     question = models.ForeignKey(Question, on_delete=models.CASCADE, verbose_name="Question")
     choice = models.ForeignKey(Choice, on_delete=models.CASCADE, verbose_name="Chosen Answer")
+    play_count = models.PositiveIntegerField(default=1)
     timestamp = models.DateTimeField(auto_now_add=True, verbose_name="Response Time")
     
     def __str__(self):
         return f"{self.user.username}'s response to '{self.question.text[:50]}...'"
     
+    def save(self, *args, **kwargs):
+        if not self.pk:
+            self.play_count = 1  # Initialize the play count for a new response
+        else:
+            self.play_count += 1  # Increment the play count for an existing response
+        super().save(*args, **kwargs)
+    
     class Meta:
         verbose_name = "User Response"
         verbose_name_plural = "User Responses"
         ordering = ['-timestamp']
-        constraints = [
-            models.UniqueConstraint(fields=['user', 'question'], name='unique_user_response')
-        ]
+        # unique_together = ('user', 'question')
+        # constraints = [
+        #     models.UniqueConstraint(fields=['user', 'question'], name='unique_user_response')
+        # ]
         
+class QuizResult(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE)
+    score = models.IntegerField()
+    total = models.IntegerField()
+    created_at = models.DateTimeField(auto_now_add=True)

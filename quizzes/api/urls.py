@@ -4,12 +4,12 @@ from .views import (QuizListCreateView, QuizDetailView,
                     QuestionListCreateView, QuestionDetailView,
                     ChoiceListCreateView, ChoiceDetailView,
                     UserResponseListCreateView, UserResponseDetailView,
-                    GenerateQuizView)
+                    GenerateQuizView, SubmitQuizView, QuizResultView)
 
 
 urlpatterns = [
     path('quizzes/', QuizListCreateView.as_view(), name='quiz-list-create'),
-    path('quizzes/<int:pk>/', QuizDetailView.as_view(), name='quiz-detail'),
+    path('quiz/<int:pk>/', QuizDetailView.as_view(), name='quiz-detail'),
     path('questions/', QuestionListCreateView.as_view(), name='question-list-create'),
     path('questions/<int:pk>/', QuestionDetailView.as_view(), name='question-detail'),
     path('choices/', ChoiceListCreateView.as_view(), name='choices-list-create'),
@@ -19,6 +19,7 @@ urlpatterns = [
     
     # ai generate quiz path
     path('generate-quiz/', GenerateQuizView.as_view(), name='generate-quiz'),
-
+    path('quiz-submit/<int:pk>/', SubmitQuizView.as_view(), name='submit-quiz'),
+    path('quiz-result/<int:quiz_id>/', QuizResultView.as_view(), name='quiz-result'),
     
 ]
